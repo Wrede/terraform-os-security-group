@@ -1,0 +1,22 @@
+Keep track of differences between aws and os provider
+
+Resource
+aws_security_group          openstack_networking_secgroup_v2
+-----------------------------------------------------------------------------
+vpc_id                      None
+revoke_rules_on_delete      None
+name_prefix                 None
+
+aws_security_group_rule     openstack_networking_secgroup_rule_v2
+-----------------------------------------------------------------------------
+type                        direction
+cidr_blocks <list(string)>  remote_ip_prefix <string>
+ipv6_cidr_blocks            None
+prefix_list_ids             None
+from_port                   port_range_min
+to_port                     port_range_max
+None                        ethertype
+source_security_group_id    remote_group_id
+
+
+
