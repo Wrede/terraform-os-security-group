@@ -6,6 +6,7 @@ aws_security_group          openstack_networking_secgroup_v2
 vpc_id                      None
 revoke_rules_on_delete      None
 name_prefix                 None
+owner_id                    tenant_id
 
 aws_security_group_rule     openstack_networking_secgroup_rule_v2
 -----------------------------------------------------------------------------
@@ -17,6 +18,6 @@ from_port                   port_range_min
 to_port                     port_range_max
 None                        ethertype
 source_security_group_id    remote_group_id
-
+self                        None (use self reference in remote_group_id)
 
 
