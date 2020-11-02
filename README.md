@@ -3,7 +3,6 @@ Terraform module for creating security groups using Openstack (private cloud) pr
 This module is an Openstack translation of [AWS EC2-VPC Security Group Terraform module](https://github.com/terraform-aws-modules/terraform-aws-security-group). Many thanks goes to the contributors of the aws module! 
 
 TODO:
-- add var.create for conditional sec groups
 - enable multi CIDR (cidr_blocks)
 - enable mix of ethertype (IPv4 and IPv6)
 - update github links in update_groups.sh and in README.md
@@ -29,9 +28,7 @@ Note: [Openstack Security Group Rule v2](https://registry.terraform.io/providers
 
 * :heavy_check_mark: Named rules ([see the rules here](https://github.com/terraform-aws-modules/terraform-aws-security-group/blob/master/rules.tf))
 * :heavy_check_mark: Named groups of rules with ingress (inbound) and egress (outbound) ports open for common scenarios (eg, [ssh](https://github.com/terraform-aws-modules/terraform-aws-security-group/tree/master/modules/ssh), [http-80](https://github.com/terraform-aws-modules/terraform-aws-security-group/tree/master/modules/http-80), [mysql](https://github.com/terraform-aws-modules/terraform-aws-security-group/tree/master/modules/mysql), see the whole list [here](https://github.com/terraform-aws-modules/terraform-aws-security-group/blob/master/modules/README.md))
-* :white_check_mark: Conditionally create security group and all required security group rules ("single boolean switch").
-
-Note: will be added soon
+* :heavy_check_mark: Conditionally create security group and all required security group rules ("single boolean switch").
 
 Ingress and egress rules can be configured in a variety of ways. See [inputs section](#inputs) for all supported arguments and [complete example](https://github.com/terraform-aws-modules/terraform-aws-security-group/tree/master/examples/complete) for the complete use-case.
 
@@ -98,8 +95,6 @@ module "vote_service_sg" {
 ```
 
 ## Conditional creation
-
-Note: will be added soon
 
 Sometimes you need to have a way to create security group conditionally but Terraform does not allow to use `count` inside `module` block, so the solution is to specify argument `create`.
 
