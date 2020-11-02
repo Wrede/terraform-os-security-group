@@ -1,3 +1,9 @@
+variable "create" {
+  description = "Whether to create security group and all rules"
+  type        = bool
+  default     = true
+}
+
 variable name {
   type        = string
   description = "Name of security group"

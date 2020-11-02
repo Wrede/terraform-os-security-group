@@ -17,7 +17,7 @@ resource "openstack_networking_secgroup_v2" "this" {
 ###################################
 # Security group rules with "cidr_blocks" and it uses list of rules names
 resource "openstack_networking_secgroup_rule_v2" "ingress_rules" {
-  count = length(var.ingress_rules)
+  count = var.create ? length(var.ingress_rules) : 0
   security_group_id = local.this_sg_id
   direction         = "ingress"
   ethertype         = var.ethertype 
@@ -33,7 +33,7 @@ resource "openstack_networking_secgroup_rule_v2" "ingress_rules" {
 
 # Computed - Security group rules with "cidr_blocks" and it uses list of rules names
 resource "openstack_networking_secgroup_rule_v2" "computed_ingress_rules" {
-  count = var.number_of_computed_ingress_rules
+  count = var.create ? var.number_of_computed_ingress_rules : 0
 
   security_group_id = local.this_sg_id
   direction              = "ingress"
@@ -52,7 +52,7 @@ resource "openstack_networking_secgroup_rule_v2" "computed_ingress_rules" {
 ##########################
 # Security group rules with "source_security_group_id", but without "cidr_blocks" and "self"
 resource "openstack_networking_secgroup_rule_v2" "ingress_with_source_security_group_id" {
-  count = length(var.ingress_with_source_security_group_id)
+  count = var.create ? length(var.ingress_with_source_security_group_id) : 0
 
   security_group_id = local.this_sg_id
   direction              = "ingress"
@@ -96,7 +96,7 @@ resource "openstack_networking_secgroup_rule_v2" "ingress_with_source_security_g
 
 # Computed - Security group rules with "source_security_group_id", but without "cidr_blocks" and "self"
 resource "openstack_networking_secgroup_rule_v2" "computed_ingress_with_source_security_group_id" {
-  count = var.number_of_computed_ingress_with_source_security_group_id
+  count = var.create ? var.number_of_computed_ingress_with_source_security_group_id : 0
 
   security_group_id = local.this_sg_id
   direction              = "ingress"
@@ -140,7 +140,7 @@ resource "openstack_networking_secgroup_rule_v2" "computed_ingress_with_source_s
 
 # Security group rules with "cidr_blocks", but without "ipv6_cidr_blocks", "source_security_group_id" and "self"
 resource "openstack_networking_secgroup_rule_v2" "ingress_with_cidr_blocks" {
-  count = length(var.ingress_with_cidr_blocks)
+  count = var.create ? length(var.ingress_with_cidr_blocks) : 0
 
   security_group_id = local.this_sg_id
   direction              = "ingress"
@@ -174,7 +174,7 @@ resource "openstack_networking_secgroup_rule_v2" "ingress_with_cidr_blocks" {
 
 # Computed - Security group rules with "cidr_blocks", but without "ipv6_cidr_blocks", "source_security_group_id" and "self"
 resource "openstack_networking_secgroup_rule_v2" "computed_ingress_with_cidr_blocks" {
-  count = var.number_of_computed_ingress_with_cidr_blocks
+  count = var.create ? var.number_of_computed_ingress_with_cidr_blocks : 0
 
   security_group_id = local.this_sg_id
   direction              = "ingress"
@@ -230,7 +230,7 @@ resource "openstack_networking_secgroup_rule_v2" "computed_ingress_with_cidr_blo
 
 # Security group rules with "self", but without "cidr_blocks" and "source_security_group_id"
 resource "openstack_networking_secgroup_rule_v2" "ingress_with_self" {
-  count = length(var.ingress_with_self)
+  count = var.create ? length(var.ingress_with_self) : 0
 
   security_group_id = local.this_sg_id
   direction              = "ingress"
@@ -265,7 +265,7 @@ resource "openstack_networking_secgroup_rule_v2" "ingress_with_self" {
 
 # Computed - Security group rules with "self", but without "cidr_blocks" and "source_security_group_id"
 resource "openstack_networking_secgroup_rule_v2" "computed_ingress_with_self" {
-  count = var.number_of_computed_ingress_with_self
+  count = var.create ? var.number_of_computed_ingress_with_self : 0
 
   security_group_id = local.this_sg_id
   direction              = "ingress"
@@ -307,7 +307,7 @@ resource "openstack_networking_secgroup_rule_v2" "computed_ingress_with_self" {
 ##################################
 # Security group rules with "cidr_blocks" and it uses list of rules names
 resource "openstack_networking_secgroup_rule_v2" "egress_rules" {
-  count = length(var.egress_rules)
+  count = var.create ? length(var.egress_rules) : 0
 
   security_group_id = local.this_sg_id
   direction         = "egress"
@@ -322,7 +322,7 @@ resource "openstack_networking_secgroup_rule_v2" "egress_rules" {
 
 # Computed - Security group rules with "cidr_blocks" and it uses list of rules names
 resource "openstack_networking_secgroup_rule_v2" "computed_egress_rules" {
-  count = var.number_of_computed_egress_rules
+  count = var.create ? var.number_of_computed_egress_rules : 0
 
   security_group_id = local.this_sg_id
   direction              = "egress"
@@ -341,7 +341,7 @@ resource "openstack_networking_secgroup_rule_v2" "computed_egress_rules" {
 #########################
 # Security group rules with "source_security_group_id", but without "cidr_blocks" and "self"
 resource "openstack_networking_secgroup_rule_v2" "egress_with_source_security_group_id" {
-  count = length(var.egress_with_source_security_group_id)
+  count = var.create ? length(var.egress_with_source_security_group_id) : 0
 
   security_group_id = local.this_sg_id
   direction              = "egress"
@@ -385,7 +385,7 @@ resource "openstack_networking_secgroup_rule_v2" "egress_with_source_security_gr
 
 # Computed - Security group rules with "source_security_group_id", but without "cidr_blocks" and "self"
 resource "openstack_networking_secgroup_rule_v2" "computed_egress_with_source_security_group_id" {
-  count = var.number_of_computed_egress_with_source_security_group_id
+  count = var.create ? var.number_of_computed_egress_with_source_security_group_id : 0
 
   security_group_id = local.this_sg_id
   direction              = "egress"
@@ -429,7 +429,7 @@ resource "openstack_networking_secgroup_rule_v2" "computed_egress_with_source_se
 
 # Security group rules with "cidr_blocks", but without "ipv6_cidr_blocks", "source_security_group_id" and "self"
 resource "openstack_networking_secgroup_rule_v2" "egress_with_cidr_blocks" {
-  count = length(var.egress_with_cidr_blocks)
+  count = var.create ? length(var.egress_with_cidr_blocks) : 0
 
   security_group_id = local.this_sg_id
   direction              = "egress"
@@ -463,7 +463,7 @@ resource "openstack_networking_secgroup_rule_v2" "egress_with_cidr_blocks" {
 
 # Computed - Security group rules with "cidr_blocks", but without "ipv6_cidr_blocks", "source_security_group_id" and "self"
 resource "openstack_networking_secgroup_rule_v2" "computed_egress_with_cidr_blocks" {
-  count = var.number_of_computed_egress_with_cidr_blocks
+  count = var.create ? var.number_of_computed_egress_with_cidr_blocks : 0
 
   security_group_id = local.this_sg_id
   direction              = "egress"
@@ -519,7 +519,7 @@ resource "openstack_networking_secgroup_rule_v2" "computed_egress_with_cidr_bloc
 
 # Security group rules with "self", but without "cidr_blocks" and "source_security_group_id"
 resource "openstack_networking_secgroup_rule_v2" "egress_with_self" {
-  count = length(var.egress_with_self)
+  count = var.create ? length(var.egress_with_self) : 0
 
   security_group_id = local.this_sg_id
   direction              = "egress"
@@ -554,7 +554,7 @@ resource "openstack_networking_secgroup_rule_v2" "egress_with_self" {
 
 # Computed - Security group rules with "self", but without "cidr_blocks" and "source_security_group_id"
 resource "openstack_networking_secgroup_rule_v2" "computed_egress_with_self" {
-  count = var.number_of_computed_egress_with_self
+  count = var.create ? var.number_of_computed_egress_with_self : 0
 
   security_group_id = local.this_sg_id
   direction              = "egress"
