@@ -26,3 +26,7 @@ aws_security_group_rule     openstack_networking_secgroup_rule_v2
 -----------------------------------------------------------------------------
 "-1" (Any protocol)         0                
 
+Ports
+aws_security_group_rule     openstack_networking_secgroup_rule_v2
+-----------------------------------------------------------------------------
+-1 (Any port)             0                
