@@ -16,6 +16,12 @@ variable description {
   default     = ""
 }
 
+variable delete_default_rules {
+  type        = bool
+  description = "Whether or not to delete the default egress security rules"
+  default     = false
+}
+
 variable "ethertype" {
   description = "The layer 3 protocol type, valid values are IPv4 or IPv6"
   type        = string

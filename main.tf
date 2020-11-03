@@ -7,8 +7,9 @@ locals {
 
 
 resource "openstack_networking_secgroup_v2" "this" {
-  name        = var.name
-  description = var.description
+  name                 = var.name
+  description          = var.description
+  delete_default_rules = var.delete_default_rules
 }
 
 
