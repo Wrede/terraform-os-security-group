@@ -2,10 +2,10 @@
 Terraform module for creating security groups using Openstack (private cloud) provider.
 This module is an Openstack translation of [AWS EC2-VPC Security Group Terraform module](https://github.com/terraform-aws-modules/terraform-aws-security-group). Many thanks goes to the contributors of the aws module!
 
-Note: This module is in early development, everything as not been tested
-Note: ```var.delete_default_rules = false``` (deafult os rules: egress rules Any protocol/Any port for IPv4 and IPv6) will currently create duplicates of the egress rule for IPv4 when
-using "all-all" in group rules. If "all-all" for IPv6 is not desired set this variable to true.
-Note: since the Openstack provider (and it's dependencies) does not support the protocol "Any" as a string, integer representation is used instead (0)
+Notes: 
+- This module is in early development, everything as not been tested
+- The variable ```var.delete_default_rules = false``` (deafult os rules: egress rules Any protocol/Any port for IPv4 and IPv6) will currently create duplicates of the egress rule for IPv4 when using "all-all" in group rules. If "all-all" for IPv6 is not desired set this variable to true.
+- Since the Openstack provider (and it's dependencies) does not support the protocol "Any" as a string, integer representation is used instead (0)
 
 TODO:
 - enable multi CIDR (cidr_blocks)
