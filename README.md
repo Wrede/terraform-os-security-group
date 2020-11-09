@@ -1,11 +1,17 @@
 # Openstack Security Group Terraform module
 Terraform module for creating security groups using Openstack (private cloud) provider.
-This module is an Openstack translation of [AWS EC2-VPC Security Group Terraform module](https://github.com/terraform-aws-modules/terraform-aws-security-group). Many thanks goes to the contributors of the aws module! 
+This module is an Openstack translation of [AWS EC2-VPC Security Group Terraform module](https://github.com/terraform-aws-modules/terraform-aws-security-group). Many thanks goes to the contributors of the aws module!
+
+Note: This module is in early development, everything as not been tested
+Note: ```var.delete_default_rules = false``` (deafult os rules: egress rules Any protocol/Any port for IPv4 and IPv6) will currently create duplicates of the egress rule for IPv4 when
+using "all-all" in group rules. If "all-all" for IPv6 is not desired set this variable to true.
+Note: since the Openstack provider (and it's dependencies) does not support the protocol "Any" as a string, integer representation is used instead (0)
 
 TODO:
 - enable multi CIDR (cidr_blocks)
-- enable mix of ethertype (IPv4 and IPv6)
+- (Done, but not tested) enable mix of ethertype (IPv4 and IPv6)
 - update github links in update_groups.sh and in README.md
+- add more examples, complete and computed
 
 These types of resources are supported:
 
@@ -15,16 +21,16 @@ These types of resources are supported:
 ## Current features supported in comparison with AWS module
 
 * :heavy_check_mark: IPv4 CIDR blocks. Currently only support a single cidr per rule.
-* :white_check_mark: IPv6 CIDR blocks. Currently not supported, associated resources and variables in main.tf and variables.tf has been removed. This might cause failure in some modules. 
+* :heavy_check_mark: IPv6 CIDR blocks. Need to be tested more...
 
-Note: [Openstack Security Group Rule v2](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/networking_secgroup_rule_v2) uses the argument ```ethertype``` to specify either IPv4 or IPv6 per rule, i.e there is no specific argument for IPv6 CIDR blocks. ```ethertype``` should be added in the rules mapping, it is currently a global variable. 
+Note: [Openstack Security Group Rule v2](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/networking_secgroup_rule_v2) uses the argument ```ethertype``` to specify either IPv4 or IPv6 per rule, i.e there is no specific argument for IPv6 CIDR blocks. ```ethertype``` key has been added in the rules mapping. 
 
 Note: [Openstack Security Group Rule v2](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/networking_secgroup_rule_v2) uses argument ```remote_ip_prefix``` for single CIDR blocks (string and not list of strings as in AWS). To my knowledge if multiple CIDR blocks are desired, copies of resource rules per CIDR has to be computed. This is currently not implemented.    
 
 * :heavy_check_mark: Access from source security groups
 * :heavy_check_mark: Access from self
 
-Note: [Openstack Security Group Rule v2](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/networking_secgroup_rule_v2) does not have a similar argument ```self``` as in [EC2-VPC Security Group Rule](https://www.terraform.io/docs/providers/aws/r/security_group_rule.html). To my knowledge, self reference is instead possible directly via ```remote_group_id```. The "self" key in associated variables in this module (postfix ```_with_self```) has been kept but instead act in a condition to decide if ```remote_group_id``` should be set to ```local.this_sg_id```. 
+Note: [Openstack Security Group Rule v2](https://registry.terraform.io/providers/terraform-provider-openstack/openstack/latest/docs/resources/networking_secgroup_rule_v2) does not have a similar argument ```self``` as in [EC2-VPC Security Group Rule](https://www.terraform.io/docs/providers/aws/r/security_group_rule.html). Self reference is instead possible directly via ```remote_group_id```. The "self" key in associated variables in this module (postfix ```_with_self```) has been kept but instead act in a condition to decide if ```remote_group_id``` should be set to ```local.this_sg_id```. 
 
 * :heavy_check_mark: Named rules ([see the rules here](https://github.com/terraform-aws-modules/terraform-aws-security-group/blob/master/rules.tf))
 * :heavy_check_mark: Named groups of rules with ingress (inbound) and egress (outbound) ports open for common scenarios (eg, [ssh](https://github.com/terraform-aws-modules/terraform-aws-security-group/tree/master/modules/ssh), [http-80](https://github.com/terraform-aws-modules/terraform-aws-security-group/tree/master/modules/http-80), [mysql](https://github.com/terraform-aws-modules/terraform-aws-security-group/tree/master/modules/mysql), see the whole list [here](https://github.com/terraform-aws-modules/terraform-aws-security-group/blob/master/modules/README.md))
