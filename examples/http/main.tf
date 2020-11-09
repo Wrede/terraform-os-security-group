@@ -27,7 +27,6 @@ module "http_sg" {
   name        = "http-sg"
   description = "Security group with HTTP ports open for everybody (IPv4 CIDR), egress ports are all world open"
   #vpc_id      = data.aws_vpc.default.id
-  ethertype = "IPv4"
 
   #ingress_cidr_blocks = ["0.0.0.0/0"]
   ingress_cidr_blocks = "0.0.0.0/0"
@@ -44,7 +43,6 @@ module "http_mysql_1_sg" {
 
   description = "Security group with HTTP and MySQL ports open for everybody (IPv4 CIDR)"
   #vpc_id      = data.aws_vpc.default.id
-  ethertype = "IPv4"
 
   #ingress_cidr_blocks = ["0.0.0.0/0"]
   ingress_cidr_blocks = "0.0.0.0/0"
@@ -62,7 +60,6 @@ module "http_mysql_2_sg" {
   name        = "http-mysql-2"
   description = "Security group with HTTP and MySQL ports open within current VPC"
   #vpc_id      = data.aws_vpc.default.id
-  ethertype = "IPv4"
 
   # Add mysql rules
   ingress_rules = ["mysql-tcp"]
@@ -82,7 +79,6 @@ module "http_with_egress_minimal_sg" {
   name        = "http-with-egress-minimal"
   description = "Security group with HTTP ports open within current VPC, and allow egress access to HTTP ports to the whole world"
   #vpc_id      = data.aws_vpc.default.id
-  ethertype = "IPv4"
 
   # Allow ingress rules to be accessed only within current VPC
   #ingress_cidr_blocks = [data.aws_vpc.default.cidr_block]
@@ -101,7 +97,6 @@ module "http_with_egress_sg" {
   name        = "http-with-egress"
   description = "Security group with HTTP ports open within current VPC, and allow egress access just to small subnet"
   #vpc_id      = data.aws_vpc.default.id
-  ethertype = "IPv4"
 
   # Add mysql rules
   ingress_rules = ["mysql-tcp"]
