@@ -21,7 +21,7 @@ resource "openstack_networking_secgroup_rule_v2" "ingress_rules" {
   count = var.create ? length(var.ingress_rules) : 0
   security_group_id = local.this_sg_id
   direction         = "ingress"
-  ethertype         = var.ethertype 
+  ethertype         = "IPv4" 
 
   #note: OS only takes a single CIDR  
   remote_ip_prefix  = var.ingress_cidr_blocks
@@ -38,7 +38,7 @@ resource "openstack_networking_secgroup_rule_v2" "computed_ingress_rules" {
 
   security_group_id = local.this_sg_id
   direction              = "ingress"
-  ethertype         = var.ethertype 
+  ethertype         = "IPv4" 
 
   remote_ip_prefix      = var.ingress_cidr_blocks
   description      = var.rules[var.computed_ingress_rules[count.index]][3]
@@ -56,11 +56,15 @@ resource "openstack_networking_secgroup_rule_v2" "ingress_with_source_security_g
   count = var.create ? length(var.ingress_with_source_security_group_id) : 0
 
   security_group_id = local.this_sg_id
-  direction              = "ingress"
-  ethertype         = var.ethertype 
+  direction         = "ingress"
+  ethertype         = lookup(
+    var.ingress_with_source_security_group_id[count.index],
+    "ethertype",
+    "IPv4",
+  )
 
-  remote_group_id = var.ingress_with_source_security_group_id[count.index]["source_security_group_id"]
-  description = lookup(
+  remote_group_id   = var.ingress_with_source_security_group_id[count.index]["source_security_group_id"]
+  description       = lookup(
     var.ingress_with_source_security_group_id[count.index],
     "description",
     "Ingress Rule",
@@ -101,10 +105,14 @@ resource "openstack_networking_secgroup_rule_v2" "computed_ingress_with_source_s
 
   security_group_id = local.this_sg_id
   direction              = "ingress"
-  ethertype         = var.ethertype
+  ethertype         = lookup(
+    var.computed_ingress_with_source_security_group_id[count.index],
+    "ethertype",
+    "IPv4",
+  )
 
-  remote_group_id = var.computed_ingress_with_source_security_group_id[count.index]["source_security_group_id"]
-  description = lookup(
+  remote_group_id   = var.computed_ingress_with_source_security_group_id[count.index]["source_security_group_id"]
+  description       = lookup(
     var.computed_ingress_with_source_security_group_id[count.index],
     "description",
     "Ingress Rule",
@@ -145,7 +153,7 @@ resource "openstack_networking_secgroup_rule_v2" "ingress_with_cidr_blocks" {
 
   security_group_id = local.this_sg_id
   direction              = "ingress"
-  ethertype         = var.ethertype 
+  ethertype         = "IPv4" 
   remote_ip_prefix = lookup(
       var.ingress_with_cidr_blocks[count.index],
       "cidr_blocks",
@@ -179,7 +187,7 @@ resource "openstack_networking_secgroup_rule_v2" "computed_ingress_with_cidr_blo
 
   security_group_id = local.this_sg_id
   direction              = "ingress"
-  ethertype         = var.ethertype
+  ethertype         = "IPv4"
 
   remote_ip_prefix = lookup(
       var.computed_ingress_with_cidr_blocks[count.index],
@@ -222,12 +230,86 @@ resource "openstack_networking_secgroup_rule_v2" "computed_ingress_with_cidr_blo
 }
 
 # Security group rules with "ipv6_cidr_blocks", but without "cidr_blocks", "source_security_group_id" and "self"
-# Not suported in OS
-# TODO:
+resource "openstack_networking_secgroup_rule_v2" "ingress_with_ipv6_cidr_blocks" {
+  count = var.create ? length(var.ingress_with_ipv6_cidr_blocks) : 0
+
+  security_group_id = local.this_sg_id
+  direction              = "ingress"
+  ethertype         = "IPv6"
+  remote_ip_prefix = lookup(
+      var.ingress_with_ipv6_cidr_blocks[count.index],
+      "cidr_blocks",
+      var.ingress_ipv6_cidr_blocks
+  )
+  description = lookup(
+    var.ingress_with_ipv6_cidr_blocks[count.index],
+    "description",
+    "Ingress Rule",
+  )
+  port_range_min = lookup(
+    var.ingress_with_ipv6_cidr_blocks[count.index],
+    "from_port",
+    var.rules[lookup(var.ingress_with_ipv6_cidr_blocks[count.index], "rule", "_")][0],
+  )
+  port_range_max = lookup(
+    var.ingress_with_ipv6_cidr_blocks[count.index],
+    "to_port",
+    var.rules[lookup(var.ingress_with_ipv6_cidr_blocks[count.index], "rule", "_")][1],
+  )
+  protocol = lookup(
+    var.ingress_with_ipv6_cidr_blocks[count.index],
+    "protocol",
+    var.rules[lookup(var.ingress_with_ipv6_cidr_blocks[count.index], "rule", "_")][2],
+  )
+}
 
 # Computed - Security group rules with "ipv6_cidr_blocks", but without "cidr_blocks", "source_security_group_id" and "self"
-# Not suported in OS
-# TODO:
+resource "openstack_networking_secgroup_rule_v2" "computed_ingress_with_ipv6_cidr_blocks" {
+  count = var.create ? var.number_of_computed_ingress_with_ipv6_cidr_blocks : 0
+
+  security_group_id = local.this_sg_id
+  direction              = "ingress"
+  ethertype         = "IPv6"
+
+  remote_ip_prefix = lookup(
+      var.computed_ingress_with_ipv6_cidr_blocks[count.index],
+      "cidr_blocks",
+      var.ingress_ipv6_cidr_blocks
+  )
+  description = lookup(
+    var.computed_ingress_with_ipv6_cidr_blocks[count.index],
+    "description",
+    "Ingress Rule",
+  )
+
+  port_range_min = lookup(
+    var.computed_ingress_with_ipv6_cidr_blocks[count.index],
+    "from_port",
+    var.rules[lookup(
+      var.computed_ingress_with_ipv6_cidr_blocks[count.index],
+      "rule",
+      "_",
+    )][0],
+  )
+  port_range_max = lookup(
+    var.computed_ingress_with_ipv6_cidr_blocks[count.index],
+    "to_port",
+    var.rules[lookup(
+      var.computed_ingress_with_ipv6_cidr_blocks[count.index],
+      "rule",
+      "_",
+    )][1],
+  )
+  protocol = lookup(
+    var.computed_ingress_with_ipv6_cidr_blocks[count.index],
+    "protocol",
+    var.rules[lookup(
+      var.computed_ingress_with_ipv6_cidr_blocks[count.index],
+      "rule",
+      "_",
+    )][2],
+  )
+}
 
 # Security group rules with "self", but without "cidr_blocks" and "source_security_group_id"
 resource "openstack_networking_secgroup_rule_v2" "ingress_with_self" {
@@ -235,10 +317,14 @@ resource "openstack_networking_secgroup_rule_v2" "ingress_with_self" {
 
   security_group_id = local.this_sg_id
   direction              = "ingress"
-  ethertype         = var.ethertype
+  ethertype         = lookup(
+    var.ingress_with_self[count.index],
+    "ethertype",
+    "IPv4",
+  )
 
   #remove:
-  #self            = lookup(var.egress_with_self[count.index], "self", true)
+  #self            = lookup(var.ingress_with_self[count.index], "self", true)
   #add:
   remote_group_id = lookup(var.ingress_with_self[count.index], "self", true) ? local.this_sg_id : ""
   description = lookup(
@@ -270,7 +356,11 @@ resource "openstack_networking_secgroup_rule_v2" "computed_ingress_with_self" {
 
   security_group_id = local.this_sg_id
   direction              = "ingress"
-  ethertype         = var.ethertype 
+  ethertype         = lookup(
+    var.computed_ingress_with_self[count.index],
+    "ethertype",
+    "IPv4",
+  )
 
   #remove:
   #self            = lookup(var.computed_ingress_with_self[count.index], "self", true)
@@ -312,7 +402,7 @@ resource "openstack_networking_secgroup_rule_v2" "egress_rules" {
 
   security_group_id = local.this_sg_id
   direction         = "egress"
-  ethertype         = var.ethertype 
+  ethertype         = "IPv4" 
   remote_ip_prefix       = var.egress_cidr_blocks
   description       = var.rules[var.egress_rules[count.index]][3]
 
@@ -327,7 +417,7 @@ resource "openstack_networking_secgroup_rule_v2" "computed_egress_rules" {
 
   security_group_id = local.this_sg_id
   direction              = "egress"
-  ethertype         = var.ethertype 
+  ethertype         = "IPv4" 
 
   remote_ip_prefix      = var.egress_cidr_blocks
   description      = var.rules[var.computed_egress_rules[count.index]][3]
@@ -346,7 +436,11 @@ resource "openstack_networking_secgroup_rule_v2" "egress_with_source_security_gr
 
   security_group_id = local.this_sg_id
   direction              = "egress"
-  ethertype         = var.ethertype 
+  ethertype         = lookup(
+    var.egress_with_source_security_group_id[count.index],
+    "ethertype",
+    "IPv4",
+  )
 
   remote_group_id = var.egress_with_source_security_group_id[count.index]["source_security_group_id"]
   description = lookup(
@@ -390,7 +484,11 @@ resource "openstack_networking_secgroup_rule_v2" "computed_egress_with_source_se
 
   security_group_id = local.this_sg_id
   direction              = "egress"
-  ethertype         = var.ethertype 
+  ethertype         = lookup(
+    var.computed_egress_with_source_security_group_id[count.index],
+    "ethertype",
+    "IPv4",
+  ) 
 
   remote_group_id = var.computed_egress_with_source_security_group_id[count.index]["source_security_group_id"]
   description = lookup(
@@ -434,7 +532,7 @@ resource "openstack_networking_secgroup_rule_v2" "egress_with_cidr_blocks" {
 
   security_group_id = local.this_sg_id
   direction              = "egress"
-  ethertype         = var.ethertype
+  ethertype         = "IPv4"
   remote_ip_prefix = lookup(
       var.egress_with_cidr_blocks[count.index],
       "cidr_blocks",
@@ -468,7 +566,7 @@ resource "openstack_networking_secgroup_rule_v2" "computed_egress_with_cidr_bloc
 
   security_group_id = local.this_sg_id
   direction              = "egress"
-  ethertype         = var.ethertype 
+  ethertype         = "IPv4" 
 
   remote_ip_prefix = lookup(
       var.computed_egress_with_cidr_blocks[count.index],
@@ -518,13 +616,100 @@ resource "openstack_networking_secgroup_rule_v2" "computed_egress_with_cidr_bloc
 # Not supported in OS
 # TODO:
 
+# Security group rules with "ipv6_cidr_blocks", but without "cidr_blocks", "source_security_group_id" and "self"
+resource "openstack_networking_secgroup_rule_v2" "egress_with_ipv6_cidr_blocks" {
+  count = var.create ? length(var.egress_with_ipv6_cidr_blocks) : 0
+
+  security_group_id = local.this_sg_id
+  direction              = "ingress"
+  ethertype         = "IPv6"
+  remote_ip_prefix = lookup(
+      var.egress_with_ipv6_cidr_blocks[count.index],
+      "cidr_blocks",
+      var.egress_ipv6_cidr_blocks
+  )
+  description = lookup(
+    var.egress_with_ipv6_cidr_blocks[count.index],
+    "description",
+    "Ingress Rule",
+  )
+  port_range_min = lookup(
+    var.egress_with_ipv6_cidr_blocks[count.index],
+    "from_port",
+    var.rules[lookup(var.egress_with_ipv6_cidr_blocks[count.index], "rule", "_")][0],
+  )
+  port_range_max = lookup(
+    var.egress_with_ipv6_cidr_blocks[count.index],
+    "to_port",
+    var.rules[lookup(var.egress_with_ipv6_cidr_blocks[count.index], "rule", "_")][1],
+  )
+  protocol = lookup(
+    var.egress_with_ipv6_cidr_blocks[count.index],
+    "protocol",
+    var.rules[lookup(var.egress_with_ipv6_cidr_blocks[count.index], "rule", "_")][2],
+  )
+}
+
+# Computed - Security group rules with "ipv6_cidr_blocks", but without "cidr_blocks", "source_security_group_id" and "self"
+resource "openstack_networking_secgroup_rule_v2" "computed_egress_with_ipv6_cidr_blocks" {
+  count = var.create ? var.number_of_computed_egress_with_ipv6_cidr_blocks : 0
+
+  security_group_id = local.this_sg_id
+  direction              = "ingress"
+  ethertype         = "IPv6"
+
+  remote_ip_prefix = lookup(
+      var.computed_egress_with_ipv6_cidr_blocks[count.index],
+      "cidr_blocks",
+      var.egress_ipv6_cidr_blocks
+  )
+  description = lookup(
+    var.computed_egress_with_ipv6_cidr_blocks[count.index],
+    "description",
+    "Ingress Rule",
+  )
+
+  port_range_min = lookup(
+    var.computed_egress_with_ipv6_cidr_blocks[count.index],
+    "from_port",
+    var.rules[lookup(
+      var.computed_egress_with_ipv6_cidr_blocks[count.index],
+      "rule",
+      "_",
+    )][0],
+  )
+  port_range_max = lookup(
+    var.computed_egress_with_ipv6_cidr_blocks[count.index],
+    "to_port",
+    var.rules[lookup(
+      var.computed_egress_with_ipv6_cidr_blocks[count.index],
+      "rule",
+      "_",
+    )][1],
+  )
+  protocol = lookup(
+    var.computed_egress_with_ipv6_cidr_blocks[count.index],
+    "protocol",
+    var.rules[lookup(
+      var.computed_egress_with_ipv6_cidr_blocks[count.index],
+      "rule",
+      "_",
+    )][2],
+  )
+}
+
+
 # Security group rules with "self", but without "cidr_blocks" and "source_security_group_id"
 resource "openstack_networking_secgroup_rule_v2" "egress_with_self" {
   count = var.create ? length(var.egress_with_self) : 0
 
   security_group_id = local.this_sg_id
   direction              = "egress"
-  ethertype         = var.ethertype 
+  ethertype         = lookup(
+    var.egress_with_self[count.index],
+    "ethertype",
+    "IPv4",
+  )
 
   #remove:
   #self            = lookup(var.egress_with_self[count.index], "self", true)
@@ -559,7 +744,11 @@ resource "openstack_networking_secgroup_rule_v2" "computed_egress_with_self" {
 
   security_group_id = local.this_sg_id
   direction              = "egress"
-  ethertype         = var.ethertype 
+  ethertype         = lookup(
+    var.computed_egress_with_self[count.index],
+    "ethertype",
+    "IPv4",
+  ) 
 
   #remove:
   #self            = lookup(var.egress_with_self[count.index], "self", true)
